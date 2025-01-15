@@ -72,8 +72,21 @@ def get_queue():
     if custom_header != ALLOWED_HEADER:
         return jsonify({"error": "Unauthorized"}), 401
 
-    max_queue = max(queues.values(), key=lambda x: len(x['players']))
-    return jsonify({"gamemode": max_queue['queue_name'], "queue_id": max_queue['queue_id'], "queue_name": max_queue['queue_name'], "players": len(max_queue['players'])}), 200
+    queue_name = request.args.get("queue")
+
+    if not queue_name:
+        return jsonify({"error": "Queue name is required."}), 400
+
+    if queue_name in queues:
+        queue = queues[queue_name]
+        return jsonify({
+            "gamemode": queue['queue_name'], 
+            "queue_id": queue['queue_id'], 
+            "queue_name": queue['queue_name'], 
+            "players": len(queue['players'])
+        }), 200
+    
+    return jsonify({"error": "Invalid queue name."}), 400
 
 @app.route('/')
 def home():
@@ -82,4 +95,3 @@ def home():
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
-    
