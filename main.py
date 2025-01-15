@@ -1,5 +1,8 @@
 from flask import Flask, jsonify
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
 
 app = Flask(__name__)
 queues = {
@@ -10,8 +13,15 @@ queues = {
 
 users_in_queue = {}
 
+API_KEY = os.getenv("API_KEY")
+
 @app.route('/join_queue', methods=['POST'])
 def join_queue():
+    auth_header = request.headers.get("Authorization")
+    
+    if auth_header != f"Bearer {API_KEY}":
+        return jsonify({"error": "Unauthorized"}), 401
+        
     user = request.json.get('user')
     gamemode = request.json.get('gamemode')
     
@@ -32,6 +42,11 @@ def join_queue():
 
 @app.route('/leave_queue', methods=['POST'])
 def leave_queue():
+    auth_header = request.headers.get("Authorization")
+    
+    if auth_header != f"Bearer {API_KEY}":
+        return jsonify({"error": "Unauthorized"}), 401
+        
     user = request.json.get('user')
     gamemode = request.json.get('gamemode')
     
@@ -52,11 +67,21 @@ def leave_queue():
 
 @app.route('/get_queue', methods=['GET'])
 def get_queue():
+    auth_header = request.headers.get("Authorization")
+    
+    if auth_header != f"Bearer {API_KEY}":
+        return jsonify({"error": "Unauthorized"}), 401
+        
     max_queue = max(queues.values(), key=lambda x: len(x['players']))
     return jsonify({"gamemode": max_queue['queue_name'], "queue_id": max_queue['queue_id'], "queue_name": max_queue['queue_name'], "players": len(max_queue['players'])}), 200
 
 @app.route('/')
 def home():
+    auth_header = request.headers.get("Authorization")
+    
+    if auth_header != f"Bearer {API_KEY}":
+        return jsonify({"error": "Unauthorized"}), 401
+        
     return "API is Online and running!"
 
 if __name__ == "__main__":
