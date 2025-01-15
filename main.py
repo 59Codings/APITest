@@ -2,8 +2,6 @@ from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
-
 app = Flask(__name__)
 queues = {
     "first": {"queue_id": 1, "queue_name": "first", "players": []},
@@ -12,8 +10,6 @@ queues = {
 }
 
 users_in_queue = {}
-
-API_KEY = os.getenv("USERAGENT")
 
 @app.route('/join_queue', methods=['POST'])
 def join_queue():
