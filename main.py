@@ -13,10 +13,11 @@ users_in_queue = {}
 
 @app.route('/join_queue', methods=['POST'])
 def join_queue():
-    content_type = request.headers.get("Content-Type")
-    if "application/x-www-form-urlencoded" not in content_type:
+        content_type = request.headers.get("Content-Type")
+    
+        if content_type is None or "application/x-www-form-urlencoded" not in content_type:
         return jsonify({"error": "Unauthorized, only Lua requests allowed."}), 401
-
+        
     user = request.json.get('user')
     gamemode = request.json.get('gamemode')
     
@@ -38,9 +39,10 @@ def join_queue():
 @app.route('/leave_queue', methods=['POST'])
 def leave_queue():
     content_type = request.headers.get("Content-Type")
-    if "application/x-www-form-urlencoded" not in content_type:
+    
+    if content_type is None or "application/x-www-form-urlencoded" not in content_type:
         return jsonify({"error": "Unauthorized, only Lua requests allowed."}), 401
-
+        
     user = request.json.get('user')
     gamemode = request.json.get('gamemode')
     
@@ -62,18 +64,20 @@ def leave_queue():
 @app.route('/get_queue', methods=['GET'])
 def get_queue():
     content_type = request.headers.get("Content-Type")
-    if "application/x-www-form-urlencoded" not in content_type:
+    
+        if content_type is None or "application/x-www-form-urlencoded" not in content_type:
         return jsonify({"error": "Unauthorized, only Lua requests allowed."}), 401
-
+        
     max_queue = max(queues.values(), key=lambda x: len(x['players']))
     return jsonify({"gamemode": max_queue['queue_name'], "queue_id": max_queue['queue_id'], "queue_name": max_queue['queue_name'], "players": len(max_queue['players'])}), 200
 
 @app.route('/')
 def home():
     content_type = request.headers.get("Content-Type")
-    if "application/x-www-form-urlencoded" not in content_type:
+    
+        if content_type is None or "application/x-www-form-urlencoded" not in content_type:
         return jsonify({"error": "Unauthorized, only Lua requests allowed."}), 401
-
+        
     return "API is Online and running!"
 
 if __name__ == "__main__":
