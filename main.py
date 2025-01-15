@@ -15,13 +15,17 @@ users_in_first_queue = {}
 users_in_second_queue = {}
 users_in_third_queue = {}
 
-ALLOWED_HEADER = os.getenv("ALLOWED_HEADER")
+ALLOWED_HEADER_NAME = os.getenv("ALLOWED_HEADER")
+
+def check_custom_header():
+    custom_header = request.headers.get(ALLOWED_HEADER_NAME)
+    if not custom_header or custom_header != "true":
+        return False
+    return True
 
 @app.route('/join_queue', methods=['POST'])
 def join_queue():
-    custom_header = request.headers.get("ALLOWEDorDev")
-    
-    if custom_header != ALLOWED_HEADER:
+    if not check_custom_header():
         return jsonify({"error": "Unauthorized"}), 401
 
     user = request.json.get('user')
@@ -54,9 +58,7 @@ def join_queue():
 
 @app.route('/leave_queue', methods=['POST'])
 def leave_queue():
-    custom_header = request.headers.get("ALLOWEDorDev")
-    
-    if custom_header != ALLOWED_HEADER:
+    if not check_custom_header():
         return jsonify({"error": "Unauthorized"}), 401
 
     user = request.json.get('user')
@@ -86,9 +88,7 @@ def leave_queue():
 
 @app.route('/get_queue', methods=['GET'])
 def get_queue():
-    custom_header = request.headers.get("ALLOWEDorDev")
-    
-    if custom_header != ALLOWED_HEADER:
+    if not check_custom_header():
         return jsonify({"error": "Unauthorized"}), 401
 
     queue_name = request.args.get("queue")
