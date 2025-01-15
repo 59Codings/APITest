@@ -17,7 +17,7 @@ API_KEY = os.getenv("USERAGENT")
 
 @app.route('/join_queue', methods=['POST'])
 def join_queue():
-    user_agent = request.headers.get("User-Agent")
+    user_agent = request.headers.get("actual-key")
     
     if user_agent != API_KEY:
     return jsonify({"error": "Unauthorized"}), 401
@@ -42,7 +42,7 @@ def join_queue():
 
 @app.route('/leave_queue', methods=['POST'])
 def leave_queue():
-    auth_header = request.headers.get("User-Agent")
+    auth_header = request.headers.get("actual-key")
     
     if auth_header != f"Bearer {API_KEY}":
         return jsonify({"error": "Unauthorized"}), 401
@@ -67,7 +67,7 @@ def leave_queue():
 
 @app.route('/get_queue', methods=['GET'])
 def get_queue():
-    auth_header = request.headers.get("User-Agent")
+    auth_header = request.headers.get("actual-key")
     
     if auth_header != f"Bearer {API_KEY}":
         return jsonify({"error": "Unauthorized"}), 401
@@ -77,7 +77,7 @@ def get_queue():
 
 @app.route('/')
 def home():
-    auth_header = request.headers.get("Authorization")
+    auth_header = request.headers.get("actual-key")
     
     if auth_header != f"Bearer {API_KEY}":
         return jsonify({"error": "Unauthorized"}), 401
